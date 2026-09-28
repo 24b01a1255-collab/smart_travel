@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Travel Guide</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <nav class="navbar">
+
+        <h2>
+            Smart Travel Guide
+        </h2>
+
+
+        <div>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="planner.html">
+                Trip Planner
+            </a>
+
+            <a href="login.html">
+                Login
+            </a>
+
+            <a href="register.html">
+                Register
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+
+<section class="hero">
+
+    <h1>
+        Explore places.
+        Plan journeys.
+        Create memories.
+    </h1>
+
+
+    <p>
+        Discover tourist places around you
+        and plan your perfect trip.
+    </p>
+
+
+    <button
+        onclick="getMyLocation()"
+    >
+        📍 Use My Location
+    </button>
+
+</section>
+
+
+
+<section class="search-section">
+
+    <h2>
+        Find Tourist Places
+    </h2>
+
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="placeSearch"
+            placeholder="Enter a place..."
+        >
+
+
+        <button
+            onclick="searchPlace()"
+        >
+            Search
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<section class="places-section">
+
+    <h2>
+        Tourist Places
+    </h2>
+
+
+    <p id="locationStatus">
+        Use your location or search for a place.
+    </p>
+
+
+    <div id="placesContainer">
+
+    </div>
+
+</section>
+
+
+
+<section class="planner-preview">
+
+    <h2>
+        Plan Your Trip
+    </h2>
+
+
+    <p>
+        Enter your destination, number of people,
+        budget and number of days.
+    </p>
+
+
+    <a href="planner.html">
+
+        <button>
+            Open Trip Planner
+        </button>
+
+    </a>
+
+</section>
+
+
+
+<footer>
+
+    <p>
+        © 2026 Smart Travel Guide
+    </p>
+
+</footer>
+
+
+
+<script src="js/home.js"></script>
+
+</body>
+
+</html>
