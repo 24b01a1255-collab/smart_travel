@@ -16,6 +16,20 @@
         rel="stylesheet"
         href="css/style.css"
     >
+    <script>
+
+    const user =
+        localStorage.getItem("user");
+
+
+    if (!user) {
+
+        window.location.href =
+            "login.html";
+
+    }
+
+</script>
 
 </head>
 
@@ -34,6 +48,10 @@
 
             <a href="index.html">
                 Home
+            </a>
+
+            <a href="planner.html">
+                Trip Planner
             </a>
 
             <a href="login.html">
@@ -55,7 +73,6 @@
 
 
     <div class="form-container">
-
 
         <input
             type="text"
@@ -88,15 +105,12 @@
         >
 
 
-        <input
-            type="text"
-            id="preferences"
-            placeholder="Preferences e.g. historical, nature"
-        >
-
+        
 
         <button onclick="createTrip()">
+
             Create Trip
+
         </button>
 
 
@@ -105,6 +119,16 @@
     </div>
 
 </section>
+
+
+
+<section
+    id="tripResult"
+    class="trip-result"
+>
+
+</section>
+
 
 
 <script src="js/planner.js"></script>

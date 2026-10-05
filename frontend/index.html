@@ -12,10 +12,32 @@
 
     <title>Smart Travel Guide</title>
 
+
     <link
         rel="stylesheet"
         href="css/style.css"
     >
+
+
+    <script>
+
+        /*
+            Do not allow users to open
+            Home without logging in.
+        */
+
+        const loggedInUser =
+            localStorage.getItem("user");
+
+
+        if (!loggedInUser) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
 
 </head>
 
@@ -27,6 +49,7 @@
 
     <nav class="navbar">
 
+
         <h2>
             Smart Travel Guide
         </h2>
@@ -34,23 +57,27 @@
 
         <div>
 
+
             <a href="index.html">
                 Home
             </a>
+
 
             <a href="planner.html">
                 Trip Planner
             </a>
 
-            <a href="login.html">
-                Login
+
+            <a
+                href="#"
+                onclick="logoutUser()"
+            >
+                Logout
             </a>
 
-            <a href="register.html">
-                Register
-            </a>
 
         </div>
+
 
     </nav>
 
@@ -59,6 +86,7 @@
 
 
 <section class="hero">
+
 
     <h1>
         Explore places.
@@ -79,11 +107,13 @@
         📍 Use My Location
     </button>
 
+
 </section>
 
 
 
 <section class="search-section">
+
 
     <h2>
         Find Tourist Places
@@ -91,6 +121,7 @@
 
 
     <div class="search-box">
+
 
         <input
             type="text"
@@ -105,7 +136,9 @@
             Search
         </button>
 
+
     </div>
+
 
 </section>
 
@@ -113,13 +146,17 @@
 
 <section class="places-section">
 
+
     <h2>
         Tourist Places
     </h2>
 
 
     <p id="locationStatus">
-        Use your location or search for a place.
+
+        Use your location or
+        search for a place.
+
     </p>
 
 
@@ -127,11 +164,13 @@
 
     </div>
 
+
 </section>
 
 
 
 <section class="planner-preview">
+
 
     <h2>
         Plan Your Trip
@@ -139,8 +178,9 @@
 
 
     <p>
-        Enter your destination, number of people,
-        budget and number of days.
+        Enter your destination,
+        number of people,
+        budget and days.
     </p>
 
 
@@ -151,6 +191,7 @@
         </button>
 
     </a>
+
 
 </section>
 
@@ -167,6 +208,24 @@
 
 
 <script src="js/home.js"></script>
+
+
+<script>
+
+    function logoutUser() {
+
+        localStorage.removeItem(
+            "user"
+        );
+
+
+        window.location.href =
+            "login.html";
+
+    }
+
+</script>
+
 
 </body>
 

@@ -1,105 +1,368 @@
-function createTripPlan(destination, people, days, budget, preferences, places) {
+const {
+    getCoordinates,
+    getNearbyPlaces,
+    getNearbyHotels
+} = require("./placesService");
 
-    people = Number(people);
-    days = Number(days);
-    budget = Number(budget);
 
-    if (!destination || !people || !days || !budget) {
-        throw new Error("Destination, people, days and budget are required");
+
+async function createPlan(
+    destination,
+    people,
+    days,
+    budget
+) {
+
+    const coordinates =
+        await getCoordinates(
+            destination
+        );
+
+
+    const places =
+        await getNearbyPlaces(
+
+            coordinates.latitude,
+
+            coordinates.longitude
+
+        );
+
+
+    if (
+        places.length === 0
+    ) {
+
+        throw new Error(
+            "No tourist places found for this destination"
+        );
+
     }
 
-    if (people <= 0 || days <= 0 || budget <= 0) {
-        throw new Error("People, days and budget must be greater than 0");
+
+    const hotels =
+        await getNearbyHotels(
+
+            coordinates.latitude,
+
+            coordinates.longitude
+
+        );
+
+
+    /*
+        Estimated hotel room price.
+
+        This is an estimate because
+        OpenStreetMap does not provide
+        reliable live hotel prices.
+    */
+
+    const estimatedRoomRate =
+        2500;
+
+
+    /*
+        Assume one room can accommodate
+        two people.
+    */
+
+    const rooms =
+        Math.ceil(
+            Number(people) / 2
+        );
+
+
+    /*
+        Number of nights is based on
+        number of trip days.
+    */
+
+    const hotelNights =
+        Number(days);
+
+
+    /*
+        Hotel cost =
+        rooms × nights × room rate
+    */
+
+    const hotelCost =
+        estimatedRoomRate *
+        rooms *
+        hotelNights;
+
+
+    const customerBudget =
+        Number(budget);
+
+
+    /*
+        Remaining budget after hotel.
+    */
+
+    const remainingBudget =
+        customerBudget -
+        hotelCost;
+
+
+    if (
+        remainingBudget < 0
+    ) {
+
+        throw new Error(
+
+            "Your budget is not enough to cover the estimated hotel stay."
+
+        );
+
     }
 
-    if (!Array.isArray(places) || places.length === 0) {
-        throw new Error("No tourist places found for this destination");
-    }
 
-    let selectedPlaces = places;
+    /*
+        Divide the remaining money
+        equally among the days.
+    */
 
-    // Filter according to preferences
-    if (preferences && preferences.length > 0) {
+    const dailySightseeingBudget =
+        Math.floor(
 
-        let preferred = preferences.toLowerCase();
+            remainingBudget /
+            Number(days)
 
-        let filteredPlaces = places.filter(function(place) {
+        );
 
-            let category =
-                place.category
-                    ? place.category.toLowerCase()
-                    : "";
 
-            let name =
-                place.name
-                    ? place.name.toLowerCase()
-                    : "";
+    /*
+        Remove duplicate tourist places.
+    */
 
-            return category.includes(preferred) ||
-                   name.includes(preferred);
+    const uniquePlaces = [];
 
-        });
+    const usedNames =
+        new Set();
 
-        if (filteredPlaces.length > 0) {
-            selectedPlaces = filteredPlaces;
+
+    for (
+        let i = 0;
+        i < places.length;
+        i++
+    ) {
+
+        const name =
+            places[i].name
+                .toLowerCase();
+
+
+        if (
+            !usedNames.has(name)
+        ) {
+
+            usedNames.add(name);
+
+            uniquePlaces.push(
+                places[i]
+            );
+
         }
+
     }
 
-    // Maximum number of places to visit
-    let maxPlaces = days * 3;
 
-    selectedPlaces = selectedPlaces.slice(0, maxPlaces);
+    /*
+        Create day-wise itinerary.
+    */
 
-    let itinerary = [];
+    const itinerary = [];
+
+
+    const totalPlaces =
+        uniquePlaces.length;
+
+
+    /*
+        Distribute tourist places
+        across the available days.
+    */
+
+    const placesPerDay =
+        Math.max(
+
+            1,
+
+            Math.ceil(
+
+                totalPlaces /
+                Number(days)
+
+            )
+
+        );
+
 
     let placeIndex = 0;
 
-    for (let day = 1; day <= days; day++) {
 
-        let dayPlaces = [];
+    for (
+        let day = 1;
+        day <= Number(days);
+        day++
+    ) {
 
-        for (let i = 0; i < 3; i++) {
+        const dayPlaces = [];
 
-            if (placeIndex >= selectedPlaces.length) {
+
+        for (
+            let j = 0;
+            j < placesPerDay;
+            j++
+        ) {
+
+            if (
+                placeIndex >=
+                totalPlaces
+            ) {
+
                 break;
+
             }
 
-            dayPlaces.push(selectedPlaces[placeIndex]);
+
+            dayPlaces.push(
+
+                uniquePlaces[
+                    placeIndex
+                ]
+
+            );
+
 
             placeIndex++;
+
         }
 
-        let dailyCost =
-            Math.round((budget / days) * 0.75);
 
         itinerary.push({
-            day: day,
-            places: dayPlaces,
-            estimatedCost: dailyCost
+
+            day_number:
+                day,
+
+            budget:
+                dailySightseeingBudget,
+
+            places:
+                dayPlaces
+
         });
+
     }
 
-    let totalEstimatedCost = 0;
 
-    for (let i = 0; i < itinerary.length; i++) {
+    /*
+        Select a hotel dynamically
+        from the hotels found near
+        the destination.
+    */
 
-        totalEstimatedCost +=
-            itinerary[i].estimatedCost;
+    let selectedHotel =
+        null;
+
+
+    if (
+        hotels.length > 0
+    ) {
+
+        selectedHotel =
+            hotels[0];
+
     }
+
+
+    /*
+        Return the complete trip plan.
+    */
 
     return {
-        destination: destination,
-        people: people,
-        days: days,
-        budget: budget,
-        preferences: preferences || "All",
-        totalEstimatedCost: totalEstimatedCost,
-        remainingBudget: budget - totalEstimatedCost,
-        itinerary: itinerary
+
+        destination:
+            destination,
+
+        people:
+            Number(people),
+
+        days:
+            Number(days),
+
+        total_budget:
+            customerBudget,
+
+
+        hotel: {
+
+            name:
+                selectedHotel
+                    ? selectedHotel.name
+                    : "No nearby hotel found",
+
+            category:
+                selectedHotel
+                    ? selectedHotel.category
+                    : "Not available",
+
+            address:
+                selectedHotel
+                    ? selectedHotel.address
+                    : "",
+
+            city:
+                selectedHotel
+                    ? selectedHotel.city
+                    : "",
+
+            latitude:
+                selectedHotel
+                    ? selectedHotel.latitude
+                    : null,
+
+            longitude:
+                selectedHotel
+                    ? selectedHotel.longitude
+                    : null,
+
+            rooms:
+                rooms,
+
+            nights:
+                hotelNights,
+
+            estimated_room_rate:
+                estimatedRoomRate,
+
+            total_cost:
+                hotelCost
+
+        },
+
+
+        remaining_budget:
+            remainingBudget,
+
+
+        daily_sightseeing_budget:
+            dailySightseeingBudget,
+
+
+        itinerary:
+            itinerary
+
     };
+
 }
 
 
+
 module.exports = {
-    createTripPlan
+
+    createPlan
+
 };

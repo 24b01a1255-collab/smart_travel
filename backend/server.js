@@ -14,30 +14,54 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, "../frontend")));
 
-app.use("/api/places", placesRoutes);
+app.use(
+    express.static(
+        path.join(__dirname, "../frontend")
+    )
+);
 
-app.use("/api/users", usersRoutes);
 
-app.use("/api/trips", tripsRoutes);
+app.use(
+    "/api/places",
+    placesRoutes
+);
+
+
+app.use(
+    "/api/users",
+    usersRoutes
+);
+
+
+app.use(
+    "/api/trips",
+    tripsRoutes
+);
+
+
+/*
+    Opening localhost:5000
+    should always start at Login.
+*/
 
 app.get("/", function(req, res) {
 
-    res.sendFile(
-        path.join(__dirname, "../frontend/index.html")
-    );
+    res.redirect("/login.html");
 
 });
+
 
 const PORT = 5000;
 
-app.listen(PORT, function() {
 
-    console.log("MySQL connected successfully");
+app.listen(
+    PORT,
+    function() {
 
-    console.log(
-        `Website running on http://localhost:${PORT}`
-    );
+        console.log(
+            "Website running on http://localhost:5000"
+        );
 
-});
+    }
+);

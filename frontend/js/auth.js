@@ -1,55 +1,105 @@
 async function registerUser() {
 
     const name =
-        document.getElementById("name").value;
+        document.getElementById(
+            "name"
+        ).value.trim();
+
 
     const email =
-        document.getElementById("email").value;
+        document.getElementById(
+            "email"
+        ).value.trim();
+
 
     const password =
-        document.getElementById("password").value;
+        document.getElementById(
+            "password"
+        ).value;
 
 
-    const response =
-        await fetch("/api/users/register", {
+    if (
+        !name ||
+        !email ||
+        !password
+    ) {
 
-            method: "POST",
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Please fill all fields.";
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        return;
 
-            body: JSON.stringify({
-
-                name: name,
-
-                email: email,
-
-                password: password
-
-            })
-
-        });
+    }
 
 
-    const data =
-        await response.json();
+    try {
+
+        const response =
+            await fetch(
+                "/api/users/register",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        name:
+                            name,
+
+                        email:
+                            email,
+
+                        password:
+                            password
+
+                    })
+
+                }
+            );
 
 
-    document.getElementById(
-        "message"
-    ).innerText =
-        data.message;
+        const data =
+            await response.json();
 
 
-    if (data.success) {
+        document.getElementById(
+            "message"
+        ).innerText =
+            data.message;
 
-        setTimeout(function() {
 
-            window.location.href =
-                "login.html";
+        if (data.success) {
 
-        }, 1000);
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "login.html";
+
+                },
+                1000
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.log(error);
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Unable to connect to server.";
 
     }
 
@@ -60,60 +110,122 @@ async function registerUser() {
 async function loginUser() {
 
     const email =
-        document.getElementById("email").value;
+        document.getElementById(
+            "email"
+        ).value.trim();
+
 
     const password =
-        document.getElementById("password").value;
+        document.getElementById(
+            "password"
+        ).value;
 
 
-    const response =
-        await fetch("/api/users/login", {
+    if (
+        !email ||
+        !password
+    ) {
 
-            method: "POST",
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Please enter email and password.";
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                email: email,
-
-                password: password
-
-            })
-
-        });
-
-
-    const data =
-        await response.json();
-
-
-    document.getElementById(
-        "message"
-    ).innerText =
-        data.message;
-
-
-    if (data.success) {
-
-        localStorage.setItem(
-
-            "user",
-
-            JSON.stringify(data.user)
-
-        );
-
-
-        setTimeout(function() {
-
-            window.location.href =
-                "index.html";
-
-        }, 1000);
+        return;
 
     }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/users/login",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        email:
+                            email,
+
+                        password:
+                            password
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            data.message;
+
+
+        if (data.success) {
+
+
+            localStorage.setItem(
+
+                "user",
+
+                JSON.stringify(
+                    data.user
+                )
+
+            );
+
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "index.html";
+
+                },
+                500
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.log(error);
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Unable to connect to server.";
+
+    }
+
+}
+
+
+
+function logoutUser() {
+
+    localStorage.removeItem(
+        "user"
+    );
+
+
+    window.location.href =
+        "login.html";
 
 }
